@@ -1,0 +1,447 @@
+#!/usr/bin/env python3
+"""
+generate_news.py
+Fetch berita sepak bola Indonesia dari RSS feeds, lalu generate index.html
+"""
+
+import feedparser
+import json
+import os
+from datetime import datetime, timezone
+from html import escape
+from email.utils import parsedate_to_datetime
+
+# ── RSS Feed Sources ──────────────────────────────────────────
+RSS_SOURCES = [
+    {
+        "url": "https://sport.detik.com/indexrss.php",
+        "name": "Detik Sport",
+        "color": "#e63946",
+    },
+    {
+        "url": "https://www.goal.com/feeds/id/news",
+        "name": "Goal Indonesia",
+        "color": "#2ecc71",
+    },
+    {
+        "url": "https://bola.kompas.com/tag/sepak-bola.rss",
+        "name": "Kompas Bola",
+        "color": "#e74c3c",
+    },
+    {
+        "url": "https://www.bola.net/rss/rss.xml",
+        "name": "Bola.net",
+        "color": "#3498db",
+    },
+    {
+        "url": "https://bola.okezone.com/rss/sport",
+        "name": "Okezone Bola",
+        "color": "#f39c12",
+    },
+]
+
+# Kata kunci filter Indonesia
+KEYWORDS = [
+    "indonesia", "timnas", "persib", "persija", "arema", "borneo fc",
+    "liga 1", "garuda", "pssi", "bri super league", "piala aff",
+    "marselino", "jay idzes", "maarten paes", "kevin diks", "beckham putra",
+    "shin tae-yong", "ole romeny", "raffi ahmad", "malut united", "persita",
+    "persis solo", "psis semarang", "bhayangkara", "barito putera",
+    "piala asia", "world cup qualifier", "kualifikasi piala dunia",
+]
+
+def parse_date(entry):
+    """Parse tanggal dari feed entry."""
+    try:
+        if hasattr(entry, 'published'):
+            return parsedate_to_datetime(entry.published)
+    except Exception:
+        pass
+    return datetime.now(timezone.utc)
+
+def is_football_indonesia(title, summary=""):
+    """Filter apakah berita relevan dengan sepak bola Indonesia."""
+    text = (title + " " + summary).lower()
+    return any(kw in text for kw in KEYWORDS)
+
+def get_category(title, summary=""):
+    """Tentukan kategori berdasarkan konten."""
+    text = (title + " " + summary).lower()
+    if any(k in text for k in ["timnas", "garuda", "piala aff", "piala asia", "world cup", "kualifikasi"]):
+        return ("Timnas", "badge-red")
+    if any(k in text for k in ["liga 1", "bri super league", "klasemen", "pekan"]):
+        return ("Liga 1", "badge-green")
+    if any(k in text for k in ["transfer", "rekrut", "datangkan", "bergabung", "pindah"]):
+        return ("Transfer", "badge-purple")
+    if any(k in text for k in ["marselino", "jay idzes", "maarten paes", "kevin diks", "abroad", "eropa"]):
+        return ("Pemain Abroad", "badge-blue")
+    if any(k in text for k in ["u-17", "u-20", "u-23", "junior"]):
+        return ("Timnas Muda", "badge-gold")
+    return ("Bola", "badge-red")
+
+def fetch_news():
+    """Fetch berita dari semua RSS sources."""
+    all_news = []
+
+    for source in RSS_SOURCES:
+        try:
+            print(f"Fetching: {source['name']}...")
+            feed = feedparser.parse(source["url"])
+            for entry in feed.entries[:15]:
+                title = entry.get("title", "").strip()
+                summary = entry.get("summary", "").strip()
+                link = entry.get("link", "#")
+
+                # Strip HTML tags dari summary
+                import re
+                summary = re.sub(r'<[^>]+>', '', summary)
+                summary = summary[:250] + "..." if len(summary) > 250 else summary
+
+                if not title:
+                    continue
+
+                if not is_football_indonesia(title, summary):
+                    continue
+
+                pub_date = parse_date(entry)
+                category, badge_class = get_category(title, summary)
+
+                all_news.append({
+                    "title": escape(title),
+                    "summary": escape(summary) if summary else "Klik untuk baca selengkapnya.",
+                    "link": link,
+                    "source": source["name"],
+                    "color": source["color"],
+                    "date": pub_date,
+                    "date_str": pub_date.strftime("%d %b %Y · %H:%M"),
+                    "category": category,
+                    "badge": badge_class,
+                })
+        except Exception as e:
+            print(f"  Error fetching {source['name']}: {e}")
+
+    # Sort by date (terbaru dulu) & hapus duplikat berdasarkan title
+    seen = set()
+    unique_news = []
+    for item in sorted(all_news, key=lambda x: x["date"], reverse=True):
+        key = item["title"][:60].lower()
+        if key not in seen:
+            seen.add(key)
+            unique_news.append(item)
+
+    print(f"Total berita ditemukan: {len(unique_news)}")
+    return unique_news[:12]
+
+def generate_card(news, index):
+    """Generate HTML card untuk satu berita."""
+    return f"""
+      <a href="{news['link']}" target="_blank" rel="noopener" class="news-card{'  featured' if index == 0 else ''}">
+        <div class="card-number">{"0" if index + 1 < 10 else ""}{index + 1}</div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="badge {news['badge']}">{news['category']}</span>
+            <span class="card-time">{news['date_str']}</span>
+          </div>
+          <div class="card-title">{news['title']}</div>
+          <div class="card-desc">{news['summary']}</div>
+          <div class="card-source">Sumber: <span>{news['source']}</span></div>
+        </div>
+      </a>"""
+
+def generate_ticker(news_list):
+    """Generate isi ticker dari headline berita."""
+    items = ""
+    for n in news_list[:8]:
+        items += f"<span>⚽ {n['title']}</span>"
+    # Duplicate untuk loop seamless
+    return items + items
+
+def generate_html(news_list):
+    """Generate full HTML page."""
+    update_time = datetime.now().strftime("%d %B %Y, %H:%M WIB")
+    update_iso  = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
+    cards_html = ""
+    for i, news in enumerate(news_list):
+        cards_html += generate_card(news, i)
+
+    ticker_html = generate_ticker(news_list)
+
+    return f"""<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="refresh" content="1800" />
+  <title>GarudaFC — Portal Sepak Bola Indonesia</title>
+  <style>
+    :root {{
+      --red:#e63946; --dark:#0a0a0f; --card:#12121a; --border:#1e1e2e;
+      --text:#e0e0e0; --muted:#666; --gold:#f4c430; --green:#2ecc71; --blue:#3498db;
+    }}
+    *{{margin:0;padding:0;box-sizing:border-box}}
+    body{{background:var(--dark);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}}
+    a{{text-decoration:none;color:inherit}}
+
+    /* HEADER */
+    header{{background:linear-gradient(135deg,#1a0000,#2d0000,#0a0a0f);border-bottom:2px solid var(--red);padding:0 24px;position:sticky;top:0;z-index:100}}
+    .header-inner{{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}}
+    .logo{{display:flex;align-items:center;gap:10px}}
+    .logo-icon{{width:38px;height:38px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}}
+    .logo-text h1{{font-size:20px;font-weight:800;color:#fff;letter-spacing:1px}}
+    .logo-text span{{font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:2px}}
+    nav{{display:flex;gap:24px}}
+    nav a{{color:#aaa;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;transition:color .2s}}
+    nav a:hover{{color:var(--red)}}
+    .live-badge{{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;animation:pulse 1.5s infinite}}
+    @keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.6}}}}
+
+    /* HERO */
+    .hero{{background:linear-gradient(135deg,#1a0000,#0a0a1a);border-bottom:1px solid var(--border);padding:40px 24px;text-align:center}}
+    .hero-tag{{display:inline-block;background:rgba(230,57,70,.15);border:1px solid var(--red);color:var(--red);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}}
+    .hero h2{{font-size:36px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px}}
+    .hero h2 span{{color:var(--red)}}
+    .hero p{{color:var(--muted);font-size:14px}}
+    .update-time{{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:#888;margin-top:12px}}
+    .dot{{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}}
+
+    /* MAIN */
+    .main{{max-width:1200px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 320px;gap:28px}}
+
+    /* TICKER */
+    .ticker{{grid-column:1/-1;background:var(--red);border-radius:8px;display:flex;align-items:center;overflow:hidden;height:40px}}
+    .ticker-label{{background:#a00;padding:0 16px;height:100%;display:flex;align-items:center;font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;flex-shrink:0}}
+    .ticker-track{{overflow:hidden;flex:1}}
+    .ticker-content{{display:flex;animation:ticker 35s linear infinite;white-space:nowrap}}
+    .ticker-content span{{padding:0 40px;font-size:13px;font-weight:600;color:#fff}}
+    @keyframes ticker{{0%{{transform:translateX(0)}}100%{{transform:translateX(-50%)}}}}
+
+    /* SECTION */
+    .section-title{{display:flex;align-items:center;gap:10px;margin-bottom:18px}}
+    .section-title h3{{font-size:16px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px}}
+    .section-title .line{{flex:1;height:1px;background:var(--border)}}
+
+    /* NEWS CARDS */
+    .news-grid{{display:flex;flex-direction:column;gap:14px}}
+    .news-card{{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;display:flex;gap:14px;transition:border-color .2s,transform .15s;cursor:pointer}}
+    .news-card:hover{{border-color:var(--red);transform:translateX(4px)}}
+    .news-card.featured{{background:linear-gradient(135deg,#1a0a0a,#12121a);border-color:#3a1010}}
+    .card-number{{font-size:28px;font-weight:900;color:#222;min-width:36px;line-height:1;padding-top:2px}}
+    .news-card.featured .card-number{{color:#3a1010}}
+    .card-body{{flex:1}}
+    .card-meta{{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}}
+    .badge{{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}}
+    .badge-red{{background:rgba(230,57,70,.2);color:var(--red);border:1px solid rgba(230,57,70,.3)}}
+    .badge-gold{{background:rgba(244,196,48,.15);color:var(--gold);border:1px solid rgba(244,196,48,.3)}}
+    .badge-blue{{background:rgba(52,152,219,.15);color:var(--blue);border:1px solid rgba(52,152,219,.3)}}
+    .badge-green{{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3)}}
+    .badge-purple{{background:rgba(155,89,182,.15);color:#a855f7;border:1px solid rgba(155,89,182,.3)}}
+    .card-time{{font-size:11px;color:var(--muted)}}
+    .card-title{{font-size:15px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}}
+    .card-desc{{font-size:13px;color:#888;line-height:1.6}}
+    .card-source{{font-size:11px;color:var(--muted);margin-top:8px}}
+    .card-source span{{color:var(--red)}}
+
+    /* SIDEBAR */
+    .sidebar{{display:flex;flex-direction:column;gap:20px}}
+    .widget{{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}}
+    .widget-header{{background:linear-gradient(135deg,#1a0000,#1a1a2e);padding:14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}}
+    .widget-header h4{{font-size:13px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px}}
+    .widget-header .season{{margin-left:auto;font-size:10px;color:var(--muted)}}
+    table{{width:100%;border-collapse:collapse}}
+    th{{font-size:10px;color:var(--muted);padding:8px 12px;text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}}
+    th:not(:first-child):not(:nth-child(2)){{text-align:center}}
+    td{{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}}
+    td:not(:first-child):not(:nth-child(2)){{text-align:center}}
+    tr:last-child td{{border-bottom:none}}
+    tr:hover td{{background:rgba(255,255,255,.02)}}
+    .rank{{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}}
+    .rank-1{{background:var(--gold);color:#000}}
+    .rank-2{{background:#aaa;color:#000}}
+    .rank-3{{background:#cd7f32;color:#000}}
+    .rank-other{{background:var(--border);color:#aaa}}
+    .club-name{{font-weight:600;color:#fff}}
+    .pts{{font-weight:700;color:var(--red)}}
+
+    .player-card{{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}}
+    .player-card:last-child{{border-bottom:none}}
+    .player-card:hover{{background:rgba(255,255,255,.02)}}
+    .player-avatar{{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#e63946,#7c1d24);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}}
+    .player-info{{flex:1}}
+    .player-name{{font-size:13px;font-weight:700;color:#fff}}
+    .player-club{{font-size:11px;color:var(--muted);margin-top:2px}}
+    .player-award{{font-size:10px;font-weight:700;color:var(--gold)}}
+
+    /* REFRESH COUNTDOWN */
+    .refresh-box{{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#888}}
+    .refresh-box .timer{{color:var(--green);font-weight:700;font-family:monospace}}
+
+    footer{{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:12px;margin-top:20px}}
+    footer a{{color:var(--red)}}
+
+    @media(max-width:768px){{.main{{grid-template-columns:1fr}}.hero h2{{font-size:24px}}nav{{display:none}}}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">⚽</div>
+      <div class="logo-text">
+        <h1>GarudaFC</h1>
+        <span>Portal Sepak Bola Indonesia</span>
+      </div>
+    </div>
+    <nav>
+      <a href="#">Beranda</a>
+      <a href="#">Timnas</a>
+      <a href="#">Liga 1</a>
+      <a href="#">Transfer</a>
+      <a href="#">Eropa</a>
+    </nav>
+    <span class="live-badge">● LIVE</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">⚡ Auto-update setiap 30 menit</div>
+  <h2>Berita Sepak Bola <span>Indonesia</span> Terkini</h2>
+  <p>Liga 1 · Timnas · Transfer · Pemain Indonesia di Eropa</p>
+  <div class="update-time">
+    <div class="dot"></div>
+    Diperbarui: {update_time}
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="ticker">
+    <div class="ticker-label">⚡ Breaking</div>
+    <div class="ticker-track">
+      <div class="ticker-content">
+        {ticker_html}
+      </div>
+    </div>
+  </div>
+
+  <!-- BERITA -->
+  <div>
+    <div class="section-title">
+      <span>🔥</span>
+      <h3>Berita Terkini</h3>
+      <div class="line"></div>
+    </div>
+    <div class="news-grid">
+      {cards_html}
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="refresh-box">
+      <span>🔄</span>
+      <span>Auto-refresh dalam <span class="timer" id="countdown">30:00</span></span>
+    </div>
+
+    <div class="widget">
+      <div class="widget-header">
+        <span>🏆</span>
+        <h4>Klasemen BRI Super League</h4>
+        <span class="season">2025/26 · Pekan 26</span>
+      </div>
+      <table>
+        <thead><tr><th>#</th><th>Klub</th><th>P</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr><td><div class="rank rank-1">1</div></td><td><span class="club-name">Persib Bandung</span></td><td>17</td><td><span class="pts">38</span></td></tr>
+          <tr><td><div class="rank rank-2">2</div></td><td><span class="club-name">Borneo FC</span></td><td>17</td><td><span class="pts">37</span></td></tr>
+          <tr><td><div class="rank rank-3">3</div></td><td><span class="club-name">Persija Jakarta</span></td><td>17</td><td><span class="pts">35</span></td></tr>
+          <tr><td><div class="rank rank-other">4</div></td><td><span class="club-name">Malut United FC</span></td><td>17</td><td><span class="pts">34</span></td></tr>
+          <tr><td><div class="rank rank-other">5</div></td><td><span class="club-name">Persita Tangerang</span></td><td>17</td><td><span class="pts">31</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget">
+      <div class="widget-header"><span>🏅</span><h4>PSSI Awards 2026</h4></div>
+      <div class="player-card">
+        <div class="player-avatar">🧱</div>
+        <div class="player-info">
+          <div class="player-name">Jay Idzes</div>
+          <div class="player-club">Sassuolo · Italia</div>
+          <div class="player-award">⭐ Pemain Terbaik</div>
+        </div>
+      </div>
+      <div class="player-card">
+        <div class="player-avatar">⚡</div>
+        <div class="player-info">
+          <div class="player-name">Marselino Ferdinan</div>
+          <div class="player-club">AS Trencin · Slovakia</div>
+          <div class="player-award">🌟 Young Player of the Year</div>
+        </div>
+      </div>
+      <div class="player-card">
+        <div class="player-avatar">🥅</div>
+        <div class="player-info">
+          <div class="player-name">Maarten Paes</div>
+          <div class="player-club">Ajax Amsterdam · NL</div>
+          <div class="player-award">🔴 Pemain Abroad Terbaik</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>⚽ <strong>GarudaFC</strong> — Portal Berita Sepak Bola Indonesia</p>
+  <p style="margin-top:6px">Sumber: <a href="https://sport.detik.com">Detik Sport</a> · <a href="https://bola.net">Bola.net</a> · <a href="https://bola.kompas.com">Kompas Bola</a> · <a href="https://goal.com/id">Goal Indonesia</a></p>
+  <p style="margin-top:6px;font-size:11px;color:#333">Auto-generated · {update_time} · GitHub Actions ⚙️</p>
+</footer>
+
+<script>
+  // Countdown timer ke refresh berikutnya
+  let seconds = 1800;
+  const el = document.getElementById('countdown');
+  setInterval(() => {{
+    seconds--;
+    if (seconds <= 0) {{ location.reload(); return; }}
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    if (el) el.textContent = m + ':' + s;
+  }}, 1000);
+</script>
+
+</body>
+</html>"""
+
+def main():
+    print("=== GarudaFC News Generator ===")
+    news = fetch_news()
+
+    if not news:
+        print("Tidak ada berita ditemukan, menggunakan fallback...")
+        # Fallback minimal agar halaman tidak kosong
+        news = [{
+            "title": "GarudaFC - Portal Sepak Bola Indonesia",
+            "summary": "Berita sepak bola Indonesia terkini akan segera hadir.",
+            "link": "#",
+            "source": "GarudaFC",
+            "color": "#e63946",
+            "date_str": datetime.now().strftime("%d %b %Y"),
+            "category": "Bola",
+            "badge": "badge-red",
+        }]
+
+    html = generate_html(news)
+
+    output_path = os.path.join(os.path.dirname(__file__), "index.html")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print(f"✅ index.html berhasil digenerate ({len(news)} berita)")
+    print(f"   Lokasi: {output_path}")
+
+if __name__ == "__main__":
+    main()

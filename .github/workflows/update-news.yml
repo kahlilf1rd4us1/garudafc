@@ -1,0 +1,36 @@
+name: Update Football News
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # Setiap 30 menit
+  workflow_dispatch:           # Bisa dijalankan manual dari GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install feedparser requests
+
+      - name: Generate berita terkini
+        run: python generate_news.py
+
+      - name: Commit & push jika ada perubahan
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Auto-update: berita sepak bola terkini"
+          file_pattern: index.html
+          commit_user_name: "GarudaFC Bot"
+          commit_user_email: "bot@garudafc.id"

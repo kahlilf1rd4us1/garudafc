@@ -33,29 +33,24 @@ echo ""
 read -p "  GitHub username  : " GH_USER
 read -s -p "  Personal Access Token (PAT): " GH_TOKEN
 echo ""
-read -p "  Nama repo baru   : " GH_REPO
+read -p "  Nama repo (sudah ada di GitHub): " GH_REPO
 
 echo ""
 echo -e "${CYAN}Menggunakan: https://github.com/${GH_USER}/${GH_REPO}${NC}"
 echo ""
 
-# ── 3. Buat repo di GitHub via API ────────────────────────────
-echo -e "📦 Membuat repo GitHub..."
+# ── 3. Cek repo sudah ada di GitHub ──────────────────────────
+echo -e "📦 Memeriksa repo GitHub..."
 
-HTTP_STATUS=$(curl -s -o /tmp/gh_response.json -w "%{http_code}" \
-  -X POST \
+CHECK_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -H "Authorization: token ${GH_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"${GH_REPO}\",\"description\":\"Portal Berita Sepak Bola Indonesia - Auto Update\",\"private\":false,\"auto_init\":false}" \
-  https://api.github.com/user/repos)
+  "https://api.github.com/repos/${GH_USER}/${GH_REPO}")
 
-if [ "$HTTP_STATUS" = "201" ]; then
-  echo -e "${GREEN}   ✓ Repo berhasil dibuat!${NC}"
-elif [ "$HTTP_STATUS" = "422" ]; then
-  echo -e "${YELLOW}   ⚠ Repo sudah ada, melanjutkan...${NC}"
+if [ "$CHECK_STATUS" = "200" ]; then
+  echo -e "${GREEN}   ✓ Repo ditemukan!${NC}"
 else
-  echo -e "${RED}   ✗ Gagal membuat repo (status: $HTTP_STATUS)${NC}"
-  cat /tmp/gh_response.json
+  echo -e "${RED}   ✗ Repo tidak ditemukan (status: $CHECK_STATUS)${NC}"
+  echo -e "${YELLOW}   Pastikan repo sudah dibuat di https://github.com/new${NC}"
   exit 1
 fi
 

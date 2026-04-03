@@ -1,177 +1,120 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="refresh" content="1800"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="refresh" content="1800" />
   <title>GarudaFC — Portal Sepak Bola Indonesia</title>
   <style>
     :root {
-      --red: #dc2626;
-      --red-light: #fef2f2;
-      --red-mid: #fee2e2;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-      --text: #1e293b;
-      --muted: #64748b;
-      --light: #f1f5f9;
-      --green: #16a34a;
-      --blue: #2563eb;
-      --gold: #d97706;
-      --purple: #7c3aed;
+      --red:#e63946; --dark:#0a0a0f; --card:#12121a; --border:#1e1e2e;
+      --text:#e0e0e0; --muted:#666; --gold:#f4c430; --green:#2ecc71; --blue:#3498db;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; }
-    a { text-decoration:none; color:inherit; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--dark);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+    a{text-decoration:none;color:inherit}
 
     /* HEADER */
-    header {
-      background:#fff;
-      border-bottom:3px solid var(--red);
-      padding:0 24px;
-      position:sticky; top:0; z-index:100;
-      box-shadow:0 1px 8px rgba(0,0,0,.08);
-    }
-    .header-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
-    .logo { display:flex; align-items:center; gap:10px; }
-    .logo-icon { width:40px; height:40px; background:var(--red); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; }
-    .logo-text h1 { font-size:22px; font-weight:900; color:var(--red); letter-spacing:-0.5px; }
-    .logo-text span { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; }
-    nav { display:flex; gap:6px; }
-    nav a { color:var(--muted); font-size:13px; font-weight:600; padding:6px 12px; border-radius:6px; transition:all .2s; }
-    nav a:hover, nav a.active { color:var(--red); background:var(--red-light); }
-    .live-pill { display:flex; align-items:center; gap:6px; background:var(--red); color:#fff; font-size:11px; font-weight:700; padding:5px 12px; border-radius:20px; }
-    .live-dot { width:7px; height:7px; background:#fff; border-radius:50%; animation:blink 1.2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-    /* TICKER */
-    .ticker { background:var(--red); overflow:hidden; height:36px; display:flex; align-items:center; }
-    .ticker-label { background:rgba(0,0,0,.2); padding:0 16px; height:100%; display:flex; align-items:center; font-size:11px; font-weight:800; color:#fff; white-space:nowrap; letter-spacing:1px; flex-shrink:0; }
-    .ticker-track { overflow:hidden; flex:1; }
-    .ticker-content { display:flex; animation:ticker 40s linear infinite; white-space:nowrap; }
-    .ticker-content span { padding:0 32px; font-size:12px; font-weight:600; color:#fff; }
-    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    header{background:linear-gradient(135deg,#1a0000,#2d0000,#0a0a0f);border-bottom:2px solid var(--red);padding:0 24px;position:sticky;top:0;z-index:100}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo-icon{width:38px;height:38px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .logo-text h1{font-size:20px;font-weight:800;color:#fff;letter-spacing:1px}
+    .logo-text span{font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:2px}
+    nav{display:flex;gap:24px}
+    nav a{color:#aaa;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;transition:color .2s}
+    nav a:hover{color:var(--red)}
+    .live-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
     /* HERO */
-    .hero {
-      background:linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #1e3a5f 100%);
-      padding:40px 24px; text-align:center; position:relative; overflow:hidden;
-    }
-    .hero::before {
-      content:'⚽'; position:absolute; right:-20px; top:-20px; font-size:160px; opacity:.06; transform:rotate(15deg);
-    }
-    .hero-tag { display:inline-block; background:rgba(255,255,255,.2); color:#fff; font-size:11px; font-weight:700; padding:4px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border:1px solid rgba(255,255,255,.3); }
-    .hero h2 { font-size:32px; font-weight:900; color:#fff; margin-bottom:6px; }
-    .hero p { color:rgba(255,255,255,.75); font-size:14px; }
-    .update-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:5px 14px; font-size:12px; color:#fff; margin-top:12px; }
-    .update-dot { width:7px; height:7px; background:#4ade80; border-radius:50%; animation:blink 1.5s infinite; }
+    .hero{background:linear-gradient(135deg,#1a0000,#0a0a1a);border-bottom:1px solid var(--border);padding:40px 24px;text-align:center}
+    .hero-tag{display:inline-block;background:rgba(230,57,70,.15);border:1px solid var(--red);color:var(--red);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+    .hero h2{font-size:36px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px}
+    .hero h2 span{color:var(--red)}
+    .hero p{color:var(--muted);font-size:14px}
+    .update-time{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:#888;margin-top:12px}
+    .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
 
     /* MAIN */
-    .main { max-width:1200px; margin:32px auto; padding:0 24px; display:grid; grid-template-columns:1fr 340px; gap:28px; }
+    .main{max-width:1200px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 320px;gap:28px}
 
-    /* SECTION LABEL */
-    .section-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
-    .section-head h3 { font-size:15px; font-weight:800; color:var(--text); text-transform:uppercase; letter-spacing:.5px; }
-    .section-head .pill { background:var(--red); color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
-    .section-line { flex:1; height:2px; background:var(--border); }
+    /* TICKER */
+    .ticker{grid-column:1/-1;background:var(--red);border-radius:8px;display:flex;align-items:center;overflow:hidden;height:40px}
+    .ticker-label{background:#a00;padding:0 16px;height:100%;display:flex;align-items:center;font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;flex-shrink:0}
+    .ticker-track{overflow:hidden;flex:1}
+    .ticker-content{display:flex;animation:ticker 35s linear infinite;white-space:nowrap}
+    .ticker-content span{padding:0 40px;font-size:13px;font-weight:600;color:#fff}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-    /* NEWS CARD */
-    .news-grid { display:flex; flex-direction:column; gap:12px; }
-    .news-card {
-      background:var(--card); border:1px solid var(--border); border-radius:12px;
-      display:flex; gap:0; overflow:hidden; cursor:pointer;
-      transition:box-shadow .2s, transform .15s; box-shadow:0 1px 3px rgba(0,0,0,.06);
-    }
-    .news-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
-    .news-card.featured { border-left:4px solid var(--red); }
-    .card-accent { width:4px; background:var(--red); flex-shrink:0; }
-    .news-card.featured .card-accent { display:none; }
-    .card-inner { padding:16px 18px; flex:1; }
-    .card-top { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
-    .badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
-    .badge-red    { background:var(--red-light); color:var(--red); }
-    .badge-green  { background:#dcfce7; color:#15803d; }
-    .badge-blue   { background:#dbeafe; color:#1d4ed8; }
-    .badge-gold   { background:#fef3c7; color:#b45309; }
-    .badge-purple { background:#ede9fe; color:#6d28d9; }
-    .card-date { font-size:11px; color:var(--muted); margin-left:auto; }
-    .card-title { font-size:15px; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:6px; }
-    .news-card:hover .card-title { color:var(--red); }
-    .card-desc { font-size:13px; color:var(--muted); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
-    .card-sources { font-size:11px; color:var(--muted); }
-    .card-sources span { color:var(--red); font-weight:600; }
-    .read-more { font-size:11px; color:var(--red); font-weight:700; display:flex; align-items:center; gap:4px; }
+    /* SECTION */
+    .section-title{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .section-title h3{font-size:16px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px}
+    .section-title .line{flex:1;height:1px;background:var(--border)}
+
+    /* NEWS CARDS */
+    .news-grid{display:flex;flex-direction:column;gap:14px}
+    .news-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;display:flex;gap:14px;transition:border-color .2s,transform .15s;cursor:pointer}
+    .news-card:hover{border-color:var(--red);transform:translateX(4px)}
+    .news-card.featured{background:linear-gradient(135deg,#1a0a0a,#12121a);border-color:#3a1010}
+    .card-number{font-size:28px;font-weight:900;color:#222;min-width:36px;line-height:1;padding-top:2px}
+    .news-card.featured .card-number{color:#3a1010}
+    .card-body{flex:1}
+    .card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+    .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+    .badge-red{background:rgba(230,57,70,.2);color:var(--red);border:1px solid rgba(230,57,70,.3)}
+    .badge-gold{background:rgba(244,196,48,.15);color:var(--gold);border:1px solid rgba(244,196,48,.3)}
+    .badge-blue{background:rgba(52,152,219,.15);color:var(--blue);border:1px solid rgba(52,152,219,.3)}
+    .badge-green{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3)}
+    .badge-purple{background:rgba(155,89,182,.15);color:#a855f7;border:1px solid rgba(155,89,182,.3)}
+    .card-time{font-size:11px;color:var(--muted)}
+    .card-title{font-size:15px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px}
+    .card-desc{font-size:13px;color:#888;line-height:1.6}
+    .card-source{font-size:11px;color:var(--muted);margin-top:8px}
+    .card-source span{color:var(--red)}
 
     /* SIDEBAR */
-    .sidebar { display:flex; flex-direction:column; gap:20px; }
-    .widget { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.06); }
-    .widget-head { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; background:var(--light); }
-    .widget-head h4 { font-size:13px; font-weight:800; color:var(--text); flex:1; }
-    .widget-head .sub { font-size:10px; color:var(--muted); }
+    .sidebar{display:flex;flex-direction:column;gap:20px}
+    .widget{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .widget-header{background:linear-gradient(135deg,#1a0000,#1a1a2e);padding:14px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+    .widget-header h4{font-size:13px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px}
+    .widget-header .season{margin-left:auto;font-size:10px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse}
+    th{font-size:10px;color:var(--muted);padding:8px 12px;text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+    th:not(:first-child):not(:nth-child(2)){text-align:center}
+    td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
+    td:not(:first-child):not(:nth-child(2)){text-align:center}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .rank{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+    .rank-1{background:var(--gold);color:#000}
+    .rank-2{background:#aaa;color:#000}
+    .rank-3{background:#cd7f32;color:#000}
+    .rank-other{background:var(--border);color:#aaa}
+    .club-name{font-weight:600;color:#fff}
+    .pts{font-weight:700;color:var(--red)}
 
-    /* KLASEMEN */
-    table { width:100%; border-collapse:collapse; }
-    th { font-size:10px; color:var(--muted); padding:8px 12px; text-align:left; background:var(--light); border-bottom:1px solid var(--border); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
-    th:not(:first-child):not(:nth-child(2)) { text-align:center; }
-    td { padding:9px 12px; font-size:13px; border-bottom:1px solid var(--border); }
-    td:not(:first-child):not(:nth-child(2)) { text-align:center; color:var(--muted); }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:var(--light); }
-    .rank { width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; }
-    .r1 { background:#f59e0b; color:#fff; }
-    .r2 { background:#94a3b8; color:#fff; }
-    .r3 { background:#b45309; color:#fff; }
-    .r-other { background:var(--border); color:var(--muted); }
-    .club { font-weight:700; color:var(--text); font-size:13px; }
-    .pts { font-weight:800; color:var(--red); }
+    .player-card{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}
+    .player-card:last-child{border-bottom:none}
+    .player-card:hover{background:rgba(255,255,255,.02)}
+    .player-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#e63946,#7c1d24);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .player-info{flex:1}
+    .player-name{font-size:13px;font-weight:700;color:#fff}
+    .player-club{font-size:11px;color:var(--muted);margin-top:2px}
+    .player-award{font-size:10px;font-weight:700;color:var(--gold)}
 
-    /* FIXTURES */
-    .fixture { padding:12px 16px; border-bottom:1px solid var(--border); }
-    .fixture:last-child { border-bottom:none; }
-    .fixture-comp { font-size:10px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
-    .fixture-teams { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
-    .team-name { font-size:13px; font-weight:700; color:var(--text); flex:1; }
-    .team-name.right { text-align:right; }
-    .vs-badge { background:var(--red); color:#fff; font-size:10px; font-weight:800; padding:2px 7px; border-radius:5px; flex-shrink:0; }
-    .fixture-info { display:flex; align-items:center; justify-content:space-between; }
-    .fixture-date { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:4px; }
-    .tv-chip { background:var(--light); border:1px solid var(--border); border-radius:5px; padding:2px 7px; font-size:10px; font-weight:700; color:var(--blue); display:flex; align-items:center; gap:3px; }
+    /* REFRESH COUNTDOWN */
+    .refresh-box{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#888}
+    .refresh-box .timer{color:var(--green);font-weight:700;font-family:monospace}
 
-    /* REFRESH */
-    .refresh-bar { background:var(--light); border:1px solid var(--border); border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); }
-    .refresh-bar strong { color:var(--green); font-family:monospace; font-size:13px; }
+    footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--muted);font-size:12px;margin-top:20px}
+    footer a{color:var(--red)}
 
-    /* MODAL */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; overflow-y:auto; padding:24px; backdrop-filter:blur(4px); }
-    .modal-overlay.open { display:flex; align-items:flex-start; justify-content:center; }
-    .modal { background:#fff; border-radius:16px; max-width:740px; width:100%; padding:32px; position:relative; margin:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
-    .modal-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border:none; background:var(--light); border-radius:8px; cursor:pointer; font-size:18px; color:var(--muted); display:flex; align-items:center; justify-content:center; transition:background .2s; }
-    .modal-close:hover { background:var(--border); }
-    .modal-badge { margin-bottom:10px; }
-    .modal-title { font-size:22px; font-weight:900; color:var(--text); line-height:1.3; margin-bottom:10px; }
-    .modal-meta { display:flex; align-items:center; gap:12px; font-size:12px; color:var(--muted); margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
-    .modal-body { font-size:15px; color:#374151; line-height:1.8; margin-bottom:20px; }
-    .modal-sources { background:var(--light); border-radius:10px; padding:14px 16px; }
-    .modal-sources h5 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:8px; }
-    .source-link { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--blue); margin-bottom:4px; text-decoration:underline; }
-    .source-link:last-child { margin-bottom:0; }
-    .source-link:hover { color:var(--red); }
-
-    footer { background:#fff; border-top:1px solid var(--border); padding:20px 24px; text-align:center; font-size:12px; color:var(--muted); margin-top:12px; }
-    footer strong { color:var(--red); }
-
-    @media(max-width:768px) {
-      .main { grid-template-columns:1fr; }
-      nav { display:none; }
-      .hero h2 { font-size:24px; }
-    }
+    @media(max-width:768px){.main{grid-template-columns:1fr}.hero h2{font-size:24px}nav{display:none}}
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="logo">
@@ -182,383 +125,111 @@
       </div>
     </div>
     <nav>
-      <a href="#" class="active">Beranda</a>
+      <a href="#">Beranda</a>
       <a href="#">Timnas</a>
       <a href="#">Liga 1</a>
       <a href="#">Transfer</a>
-      <a href="#">Abroad</a>
+      <a href="#">Eropa</a>
     </nav>
-    <div class="live-pill"><div class="live-dot"></div> LIVE</div>
+    <span class="live-badge">● LIVE</span>
   </div>
 </header>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-label">⚡ BREAKING</div>
-  <div class="ticker-track">
-    <div class="ticker-content">
-      <span>🏆 Indonesia Runner-Up FIFA Series 2026, Kalah 0-1 dari Bulgaria di Final SUGBK</span>
-      <span>📊 Ranking FIFA: Indonesia Tertahan di Posisi 122 Dunia</span>
-      <span>⚽ Persib Pimpin Klasemen dengan 58 Poin, Unggul 4 Angka dari Borneo FC</span>
-      <span>🌍 Jay Idzes Kapten Timnas, Sorotan Media Italia Iringi Garuda</span>
-      <span>🔴 Layvin Kurzawa (Eks PSG) Resmi Berseragam Persib Bandung</span>
-      <span>🏟️ Drawing Piala Asia AFC 2027 Dijadwalkan 11 April di Arab Saudi</span>
-      <span>🇮🇩 U-17 Indonesia di Grup A Piala AFF bersama Vietnam & Malaysia</span>
-      <span>🏆 Indonesia Runner-Up FIFA Series 2026, Kalah 0-1 dari Bulgaria di Final SUGBK</span>
-      <span>📊 Ranking FIFA: Indonesia Tertahan di Posisi 122 Dunia</span>
-      <span>⚽ Persib Pimpin Klasemen dengan 58 Poin, Unggul 4 Angka dari Borneo FC</span>
-      <span>🌍 Jay Idzes Kapten Timnas, Sorotan Media Italia Iringi Garuda</span>
-      <span>🔴 Layvin Kurzawa (Eks PSG) Resmi Berseragam Persib Bandung</span>
-      <span>🏟️ Drawing Piala Asia AFC 2027 Dijadwalkan 11 April di Arab Saudi</span>
-      <span>🇮🇩 U-17 Indonesia di Grup A Piala AFF bersama Vietnam & Malaysia</span>
-    </div>
-  </div>
-</div>
-
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-tag">⚡ Update Otomatis Setiap 30 Menit</div>
-  <h2>🇮🇩 Berita Sepak Bola Indonesia</h2>
-  <p>Timnas · Liga 1 · Transfer · Pemain Abroad · Jadwal Pertandingan</p>
-  <div class="update-badge">
-    <div class="update-dot"></div>
-    Diperbarui: 4 April 2026
+  <div class="hero-tag">⚡ Auto-update setiap 30 menit</div>
+  <h2>Berita Sepak Bola <span>Indonesia</span> Terkini</h2>
+  <p>Liga 1 · Timnas · Transfer · Pemain Indonesia di Eropa</p>
+  <div class="update-time">
+    <div class="dot"></div>
+    Diperbarui: 03 April 2026, 19:40 WIB
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-  <!-- NEWS -->
+  <div class="ticker">
+    <div class="ticker-label">⚡ Breaking</div>
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span>⚽ GarudaFC - Portal Sepak Bola Indonesia</span><span>⚽ GarudaFC - Portal Sepak Bola Indonesia</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BERITA -->
   <div>
-    <div class="section-head">
+    <div class="section-title">
       <span>🔥</span>
       <h3>Berita Terkini</h3>
-      <span class="pill">12 Berita</span>
-      <div class="section-line"></div>
+      <div class="line"></div>
     </div>
-
     <div class="news-grid">
-
-      <div class="news-card featured" onclick="openModal(0)">
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-red">Timnas Senior</span>
-            <span class="card-date">📅 30 Mar 2026</span>
+      
+      <a href="#" target="_blank" rel="noopener" class="news-card  featured">
+        <div class="card-number">01</div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="badge badge-red">Bola</span>
+            <span class="card-time">03 Apr 2026</span>
           </div>
-          <div class="card-title">Indonesia Runner-Up FIFA Series 2026, Kalah Tipis 0-1 dari Bulgaria di Final SUGBK</div>
-          <div class="card-desc">Timnas Indonesia harus puas meraih posisi runner-up setelah takluk 0-1 dari Bulgaria dalam laga final yang digelar di SUGBK, Jakarta. Gol tunggal Bulgaria dicetak melalui eksekusi penalti di menit ke-38 akibat pelanggaran Kevin Diks berdasarkan keputusan VAR.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Kompas Bola · Detik Sport</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
+          <div class="card-title">GarudaFC - Portal Sepak Bola Indonesia</div>
+          <div class="card-desc">Berita sepak bola Indonesia terkini akan segera hadir.</div>
+          <div class="card-source">Sumber: <span>GarudaFC</span></div>
         </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(1)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-red">Timnas Senior</span>
-            <span class="card-date">📅 1–2 Apr 2026</span>
-          </div>
-          <div class="card-title">John Herdman "Mundur Sejenak" untuk Evaluasi Total Timnas Pasca FIFA Series 2026</div>
-          <div class="card-desc">Pelatih baru Timnas Indonesia memilih mengambil jarak sementara untuk evaluasi menyeluruh pasca dua laga perdananya, menegaskan tim butuh analisis objektif jauh dari suasana emosional.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Viva.co.id · Skor.id</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(2)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-blue">Ranking FIFA</span>
-            <span class="card-date">📅 1 Apr 2026</span>
-          </div>
-          <div class="card-title">Ranking FIFA Terbaru: Indonesia Tertahan di Posisi 122 Dunia Usai FIFA Series</div>
-          <div class="card-desc">Indonesia tetap di posisi 122 dengan 1.144,88 poin. Garuda mendapat tambahan dari kemenangan besar atas Saint Kitts, namun terpotong akibat kekalahan dari Bulgaria. Di ASEAN, Indonesia di peringkat 3 setelah Thailand dan Vietnam.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Kompas.com · Bola.net</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(3)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-purple">Pemain Abroad</span>
-            <span class="card-date">📅 27–30 Mar 2026</span>
-          </div>
-          <div class="card-title">Jay Idzes Pimpin Timnas di FIFA Series, Media Italia Soroti Dua Bintang Garuda dari Serie A</div>
-          <div class="card-desc">Jay Idzes (Sassuolo) dipercaya John Herdman mengenakan ban kapten Timnas Indonesia sepanjang FIFA Series 2026. Kehadiran Idzes dan Emil Audero (Cremonese) menarik sorotan media Italia tentang fenomena dua pemain Serie A membela Garuda.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Bolasport.com · Kompas Bola</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(4)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-gold">Kompetisi AFC</span>
-            <span class="card-date">📅 1–3 Apr 2026</span>
-          </div>
-          <div class="card-title">Drawing Piala Asia AFC 2027 Dijadwalkan 11 April di Arab Saudi, Indonesia Masuk Pot 4</div>
-          <div class="card-desc">AFC mengumumkan pengundian fase grup Piala Asia 2027 pada 11 April di Diriyah Salwa Palace, Arab Saudi. Indonesia ditempatkan di Pot 4 bersama Kuwait dan Singapura. Turnamen berlangsung 7 Januari–5 Februari 2027 dengan 24 peserta.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Bola.com · Tirto.id</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(5)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-green">Liga 1</span>
-            <span class="card-date">📅 1–3 Apr 2026</span>
-          </div>
-          <div class="card-title">Persib Bandung Kokoh di Puncak dengan 58 Poin, Unggul 4 Angka dari Borneo FC</div>
-          <div class="card-desc">Persib memimpin BRI Super League 2025/2026 dengan 58 poin dari 25 laga — 18 menang, 4 seri, 3 kalah. Maung Bandung mencetak 43 gol dan hanya kebobolan 14, plus rekor tak terkalahkan di GBLA sepanjang musim ini.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Liputan6.com · Bola.net</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(6)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-green">Liga 1</span>
-            <span class="card-date">📅 3 Apr 2026</span>
-          </div>
-          <div class="card-title">BRI Super League Pekan 26 Kembali Bergulir, Arema vs Malut United Buka Kompetisi Pasca Lebaran</div>
-          <div class="card-desc">Liga 1 kembali usai libur Lebaran dengan laga pembuka Arema FC vs Malut United di Stadion Kanjuruhan, berakhir imbang 1-1. Seluruh laga bisa disaksikan live di Indosiar dan Vidio.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Bola.net · Metro TV News</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(7)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-green">Liga 1</span>
-            <span class="card-date">📅 2–3 Apr 2026</span>
-          </div>
-          <div class="card-title">Borneo FC Bantai Persebaya 5-1, Pesut Etam Siap Kejar Persib di Puncak Klasemen</div>
-          <div class="card-desc">Borneo FC menghajar Persebaya Surabaya 5-1 sebelum jeda Lebaran dan kini berselisih 4 poin dari Persib. Tim asuhan Pesut Etam bertekad tidak terpeleset saat menjamu Madura United pada 5 April 2026.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>SportCorner.id · iNews.id</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(8)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-purple">Transfer</span>
-            <span class="card-date">📅 25 Jan 2026</span>
-          </div>
-          <div class="card-title">Layvin Kurzawa Resmi Berseragam Persib Bandung, Mantan Bintang PSG Pilih Liga Indonesia</div>
-          <div class="card-desc">Mantan bek kiri PSG dan Timnas Prancis Layvin Kurzawa resmi bergabung Persib dan diperkenalkan kepada ribuan Bobotoh di GBLA. Kurzawa menerima gaji 50.000 Euro/bulan (≈ Rp 980 juta), menjadikannya salah satu pemain bergaji tertinggi di Indonesia.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Detik Sport · Kompas Bola</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(9)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-purple">Pemain Abroad</span>
-            <span class="card-date">📅 Mar 2026</span>
-          </div>
-          <div class="card-title">Sejarah Baru: 14 Pemain Abroad di Skuad Timnas Indonesia, 4 dari Lima Liga Top Eropa</div>
-          <div class="card-desc">Indonesia mencatat sejarah dengan memanggil 14 pemain abroad di FIFA Series 2026, termasuk 4 dari liga top Eropa: Jay Idzes & Emil Audero (Serie A), Calvin Verdonk (Ligue 1), Kevin Diks (Bundesliga). Ini jumlah terbanyak dalam sejarah sepak bola Indonesia.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Jawa Pos · CNN Indonesia</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(10)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-purple">Pemain Abroad</span>
-            <span class="card-date">📅 Sep 2025 – Apr 2026</span>
-          </div>
-          <div class="card-title">Marselino Ferdinan Jalani Petualangan di Slovak Liga bersama AS Trencin, On Loan dari Oxford United</div>
-          <div class="card-desc">Gelandang serang Timnas Marselino Ferdinan menjalani musim 2025/2026 bersama AS Trencin di Slovak First Football League, dipinjam dari Oxford United. John Herdman memberi sinyal akan mempertimbangkan Marselino kembali untuk jendela FIFA berikutnya.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>Kompas Bola · Transfermarkt</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" onclick="openModal(11)">
-        <div class="card-accent"></div>
-        <div class="card-inner">
-          <div class="card-top">
-            <span class="badge badge-red">Timnas U-17</span>
-            <span class="card-date">📅 3 Apr 2026</span>
-          </div>
-          <div class="card-title">Timnas U-17 di Grup A Piala AFF U-17 2026 Bersama Vietnam & Malaysia, Tuan Rumah Sidoarjo</div>
-          <div class="card-desc">Indonesia tergabung di Grup A Piala AFF U-17 2026 bersama Vietnam, Malaysia, dan Timor Leste. Turnamen berlangsung 13–24 April di Stadion Gelora Delta Sidoarjo dan Gelora Joko Samudro, Gresik. Laga perdana vs Malaysia dijadwalkan 16 April, pukul 19.30 WIB.</div>
-          <div class="card-footer">
-            <div class="card-sources">📰 <span>ANTARA News · Okezone Bola</span></div>
-            <div class="read-more">Baca selengkapnya →</div>
-          </div>
-        </div>
-      </div>
-
+      </a>
     </div>
   </div>
 
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <!-- REFRESH COUNTDOWN -->
-    <div class="refresh-bar">
-      🔄 Auto-refresh dalam <strong id="countdown">30:00</strong>
+    <div class="refresh-box">
+      <span>🔄</span>
+      <span>Auto-refresh dalam <span class="timer" id="countdown">30:00</span></span>
     </div>
 
-    <!-- KLASEMEN -->
     <div class="widget">
-      <div class="widget-head">
+      <div class="widget-header">
         <span>🏆</span>
         <h4>Klasemen BRI Super League</h4>
-        <span class="sub">2025/26</span>
+        <span class="season">2025/26 · Pekan 26</span>
       </div>
       <table>
-        <thead>
-          <tr><th>#</th><th>Klub</th><th>P</th><th>Pts</th></tr>
-        </thead>
+        <thead><tr><th>#</th><th>Klub</th><th>P</th><th>Pts</th></tr></thead>
         <tbody>
-          <tr><td><div class="rank r1">1</div></td><td><span class="club">Persib Bandung</span></td><td>25</td><td><span class="pts">58</span></td></tr>
-          <tr><td><div class="rank r2">2</div></td><td><span class="club">Borneo FC</span></td><td>25</td><td><span class="pts">54</span></td></tr>
-          <tr><td><div class="rank r3">3</div></td><td><span class="club">Persija Jakarta</span></td><td>25</td><td><span class="pts">46</span></td></tr>
-          <tr><td><div class="rank r-other">4</div></td><td><span class="club">Malut United</span></td><td>25</td><td><span class="pts">42</span></td></tr>
-          <tr><td><div class="rank r-other">5</div></td><td><span class="club">Bali United</span></td><td>25</td><td><span class="pts">38</span></td></tr>
-          <tr><td><div class="rank r-other">6</div></td><td><span class="club">Persita Tangerang</span></td><td>25</td><td><span class="pts">35</span></td></tr>
+          <tr><td><div class="rank rank-1">1</div></td><td><span class="club-name">Persib Bandung</span></td><td>17</td><td><span class="pts">38</span></td></tr>
+          <tr><td><div class="rank rank-2">2</div></td><td><span class="club-name">Borneo FC</span></td><td>17</td><td><span class="pts">37</span></td></tr>
+          <tr><td><div class="rank rank-3">3</div></td><td><span class="club-name">Persija Jakarta</span></td><td>17</td><td><span class="pts">35</span></td></tr>
+          <tr><td><div class="rank rank-other">4</div></td><td><span class="club-name">Malut United FC</span></td><td>17</td><td><span class="pts">34</span></td></tr>
+          <tr><td><div class="rank rank-other">5</div></td><td><span class="club-name">Persita Tangerang</span></td><td>17</td><td><span class="pts">31</span></td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- JADWAL MENDATANG -->
     <div class="widget">
-      <div class="widget-head">
-        <span>📅</span>
-        <h4>Pertandingan Mendatang</h4>
-      </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">BRI Super League · Pekan 26</div>
-        <div class="fixture-teams">
-          <span class="team-name">Persebaya</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">Persita</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Jum, 4 Apr · 19.00 WIB</span>
-          <span class="tv-chip">📺 Indosiar · Vidio</span>
+      <div class="widget-header"><span>🏅</span><h4>PSSI Awards 2026</h4></div>
+      <div class="player-card">
+        <div class="player-avatar">🧱</div>
+        <div class="player-info">
+          <div class="player-name">Jay Idzes</div>
+          <div class="player-club">Sassuolo · Italia</div>
+          <div class="player-award">⭐ Pemain Terbaik</div>
         </div>
       </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">BRI Super League · Pekan 26</div>
-        <div class="fixture-teams">
-          <span class="team-name">Madura Utd</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">Borneo FC</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Min, 5 Apr · 19.00 WIB</span>
-          <span class="tv-chip">📺 Indosiar · Vidio</span>
+      <div class="player-card">
+        <div class="player-avatar">⚡</div>
+        <div class="player-info">
+          <div class="player-name">Marselino Ferdinan</div>
+          <div class="player-club">AS Trencin · Slovakia</div>
+          <div class="player-award">🌟 Young Player of the Year</div>
         </div>
       </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">BRI Super League · Pekan 26</div>
-        <div class="fixture-teams">
-          <span class="team-name">Semen Padang</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">Persib</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Min, 5 Apr · 19.00 WIB</span>
-          <span class="tv-chip">📺 Indosiar · Vidio</span>
-        </div>
-      </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">BRI Super League · Pekan 26</div>
-        <div class="fixture-teams">
-          <span class="team-name">Bhayangkara</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">Persija</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Min, 5 Apr · 15.30 WIB</span>
-          <span class="tv-chip">📺 Indosiar · Vidio</span>
-        </div>
-      </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">BRI Super League · Pekan 26</div>
-        <div class="fixture-teams">
-          <span class="team-name">Bali United</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">PSBS Biak</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Sen, 6 Apr · 19.00 WIB</span>
-          <span class="tv-chip">📺 Indosiar · Vidio</span>
-        </div>
-      </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">🇮🇩 Piala AFF U-17 2026 · Grup A</div>
-        <div class="fixture-teams">
-          <span class="team-name">Indonesia U-17</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">Malaysia U-17</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 Kam, 16 Apr · 19.30 WIB</span>
-          <span class="tv-chip">📺 iNews · RCTI+</span>
-        </div>
-      </div>
-
-      <div class="fixture">
-        <div class="fixture-comp">🇮🇩 FIFA Matchday Juni 2026</div>
-        <div class="fixture-teams">
-          <span class="team-name">Indonesia</span>
-          <span class="vs-badge">VS</span>
-          <span class="team-name right">TBA</span>
-        </div>
-        <div class="fixture-info">
-          <span class="fixture-date">📅 1–9 Jun 2026</span>
-          <span class="tv-chip">📺 TBA</span>
+      <div class="player-card">
+        <div class="player-avatar">🥅</div>
+        <div class="player-info">
+          <div class="player-name">Maarten Paes</div>
+          <div class="player-club">Ajax Amsterdam · NL</div>
+          <div class="player-award">🔴 Pemain Abroad Terbaik</div>
         </div>
       </div>
     </div>
@@ -567,228 +238,23 @@
 </div>
 
 <footer>
-  <strong>GarudaFC</strong> — Portal Berita Sepak Bola Indonesia &nbsp;|&nbsp;
-  Sumber: Kompas Bola · Detik Sport · Bola.net · Antara · Okezone · Liputan6 &nbsp;|&nbsp;
-  Auto-update via GitHub Actions ⚙️
+  <p>⚽ <strong>GarudaFC</strong> — Portal Berita Sepak Bola Indonesia</p>
+  <p style="margin-top:6px">Sumber: <a href="https://sport.detik.com">Detik Sport</a> · <a href="https://bola.net">Bola.net</a> · <a href="https://bola.kompas.com">Kompas Bola</a> · <a href="https://goal.com/id">Goal Indonesia</a></p>
+  <p style="margin-top:6px;font-size:11px;color:#333">Auto-generated · 03 April 2026, 19:40 WIB · GitHub Actions ⚙️</p>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
-  <div class="modal" id="modalBox">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modalContent"></div>
-  </div>
-</div>
-
 <script>
-const articles = [
-  {
-    badge: "Timnas Senior", badgeClass: "badge-red",
-    date: "30 Maret 2026", author: "GarudaFC · Kompas Bola · Detik Sport",
-    title: "Indonesia Runner-Up FIFA Series 2026, Kalah Tipis 0-1 dari Bulgaria di Final SUGBK",
-    body: `<p>Timnas Indonesia harus puas meraih posisi runner-up di FIFA Series 2026 setelah takluk 0-1 dari Bulgaria dalam laga final yang digelar di Stadion Utama Gelora Bung Karno (SUGBK), Jakarta, Senin (30/3/2026).</p>
-<p>Gol tunggal Bulgaria dicetak oleh Marin Petkov melalui eksekusi penalti di menit ke-38, setelah Kevin Diks dianggap melanggar pemain Bulgaria berdasarkan keputusan VAR yang kontroversial.</p>
-<p>Indonesia sempat dua kali membentur mistar gawang Bulgaria sepanjang pertandingan, namun tidak mampu mencetak gol balasan meski mendominasi penguasaan bola di babak kedua.</p>
-<p>Sebelumnya di fase grup (27/3), Garuda berhasil menghajar Saint Kitts and Nevis dengan skor telak 4-0, dengan gol dari Beckham Putra (2 gol), Ole Romeny, dan Mauro Zijlstra — memberikan harapan besar bagi jutaan pendukung.</p>
-<p>Ini merupakan partisipasi perdana Indonesia di final turnamen bertajuk FIFA Series, dan pencapaian runner-up tetap dianggap positif mengingat Bulgaria adalah tim berperingkat jauh lebih tinggi di ranking FIFA.</p>`,
-    sources: [
-      { name: "Kompas Bola — Hasil Lengkap FIFA Series 2026", url: "https://bola.kompas.com/read/2026/03/30/22545898/hasil-lengkap-fifa-series-2026-indonesia-runner-up-bulgaria-juara" },
-      { name: "Detik Sport — Hasil Indonesia Vs Bulgaria di Final FIFA Series 2026", url: "https://sport.detik.com/sportstyle/d-8422445/hasil-indonesia-vs-bulgaria-garuda-kalah-0-1-di-final-fifa-series-2026" }
-    ]
-  },
-  {
-    badge: "Timnas Senior", badgeClass: "badge-red",
-    date: "1–2 April 2026", author: "GarudaFC · Viva.co.id · Skor.id",
-    title: "John Herdman \"Mundur Sejenak\" untuk Evaluasi Total Timnas Pasca FIFA Series 2026",
-    body: `<p>Pelatih baru Timnas Indonesia, John Herdman, memilih mengambil jarak sementara untuk melakukan evaluasi menyeluruh setelah memimpin dua laga pertamanya bersama Garuda di FIFA Series 2026.</p>
-<p>Herdman menegaskan bahwa evaluasi tidak sebaiknya dilakukan dalam kondisi emosional, sehingga ia membutuhkan waktu tenang sebelum menganalisis performa tim secara objektif.</p>
-<p>Dalam komentar singkatnya pasca final, Herdman mengakui bahwa persiapan kurang matang jelang turnamen, sehingga tim belum dapat mengimplementasikan taktik yang ia rancang secara maksimal.</p>
-<p>Namun demikian, mantan pelatih Kanada dan Inggris ini menemukan kekuatan besar dalam tim, menyebut Indonesia berpotensi menjadi tim paling adaptif di Asia.</p>
-<p>Evaluasi penuh dijadwalkan sekitar dua minggu setelah final, dengan fokus pada penguatan pola serangan di sepertiga akhir lapangan menjelang jeda internasional Juni 2026.</p>`,
-    sources: [
-      { name: "Viva.co.id — Evaluasi FIFA Series 2026: John Herdman Pilih 'Mundur Sejenak'", url: "https://www.viva.co.id/bola/1889152-evaluasi-fifa-series-2026-john-herdman-pilih-mundur-sejenak-usai-debut-bersama-timnas-indonesia" },
-      { name: "Skor.id — Herdman Temukan Kekuatan Besar Timnas Indonesia", url: "https://skor.id/posts/749014/evaluasi-penampilan-di-fifa-series-2026-john-herdman-temukan-kekuatan-besar-timnas-indonesia" }
-    ]
-  },
-  {
-    badge: "Ranking FIFA", badgeClass: "badge-blue",
-    date: "1 April 2026", author: "GarudaFC · Kompas.com · Bola.net",
-    title: "Ranking FIFA Terbaru: Indonesia Tertahan di Posisi 122 Dunia Usai FIFA Series",
-    body: `<p>FIFA merilis pembaruan ranking resmi per 1 April 2026, dan Timnas Indonesia tercatat tetap berada di posisi 122 dunia dengan koleksi 1.144,88 poin.</p>
-<p>Secara teknis, Indonesia mengalami pergerakan tipis setelah dua laga FIFA Series 2026 — mendapat tambahan 3,96 poin dari kemenangan 4-0 atas Saint Kitts and Nevis, namun terpotong 3,81 poin akibat kekalahan 0-1 dari Bulgaria.</p>
-<p>Di kawasan Asia Tenggara, Indonesia menempati peringkat ketiga di bawah Thailand (93) dan Vietnam (99), sementara negara-negara ASEAN lain masih tertinggal jauh.</p>
-<p>Dengan agenda padat ke depan termasuk FIFA Matchday Juni dan Piala AFF 2026, Indonesia masih berpeluang mendongkrak poin secara signifikan jika berhasil meraih hasil positif.</p>`,
-    sources: [
-      { name: "Kompas.com — Update Resmi FIFA, Ranking Timnas Indonesia Terbaru", url: "https://www.kompas.com/tren/read/2026/04/01/203324765/update-resmi-fifa-ini-ranking-timnas-indonesia-terbaru-peringkat-berapa" },
-      { name: "Bola.net — Ranking FIFA April 2026: Timnas Indonesia Posisi 122", url: "https://www.bola.net/tim_nasional/ranking-fifa-april-2026-timnas-indonesia-tertahan-di-posisi-122-838eba.html" }
-    ]
-  },
-  {
-    badge: "Pemain Abroad", badgeClass: "badge-purple",
-    date: "27–30 Maret 2026", author: "GarudaFC · Bolasport · Kompas Bola",
-    title: "Jay Idzes Pimpin Timnas di FIFA Series, Media Italia Soroti Dua Bintang Garuda dari Serie A",
-    body: `<p>Bek tengah Jay Idzes yang berkarier di Sassuolo (Serie A Italia) dipercaya John Herdman mengenakan ban kapten Timnas Indonesia sepanjang FIFA Series 2026.</p>
-<p>Keikutsertaan Idzes bersama kiper Emil Audero (Cremonese, Serie A) dalam skuad Timnas Indonesia menarik perhatian media olahraga Italia, yang menyoroti fenomena dua pemain aktif liga mereka membela tim nasional Asia Tenggara.</p>
-<p>Sebelum berangkat ke Jakarta, keduanya tampil heroik bersama klub masing-masing di liga Italia, yang semakin menaikkan profil sepak bola Indonesia di mata publik Eropa.</p>
-<p>Jay Idzes dalam pidatonya usai final menyampaikan rasa bangga meski harus mengakui keunggulan Bulgaria, dan berjanji Garuda akan terus berkembang.</p>
-<p>Kehadiran empat pemain dari liga top Eropa dalam satu skuad Timnas Indonesia disebut sebagai sejarah baru sepak bola Indonesia yang patut dirayakan.</p>`,
-    sources: [
-      { name: "Bolasport.com — Jay Idzes dan Emil Audero Datang ke Timnas Indonesia", url: "https://www.bolasport.com/read/314364533/jay-idzes-dan-emil-audero-datang-ke-timnas-indonesia-setelah-rusak-skenario-klasemen-liga-italia" },
-      { name: "Kompas Bola — Pidato Jay Idzes Usai Timnas Kalah di Final FIFA Series", url: "https://bola.kompas.com/read/2026/03/30/22505058/pidato-jay-idzes-usai-timnas-indonesia-kalah-di-final-fifa-series-2026" }
-    ]
-  },
-  {
-    badge: "Kompetisi AFC", badgeClass: "badge-gold",
-    date: "1–3 April 2026", author: "GarudaFC · Bola.com · Tirto.id",
-    title: "Drawing Piala Asia AFC 2027 Dijadwalkan 11 April di Arab Saudi, Indonesia Masuk Pot 4",
-    body: `<p>AFC mengumumkan bahwa pengundian fase grup Piala Asia 2027 akan diselenggarakan pada 11 April 2026 di Diriyah Salwa Palace, Diriyah, Arab Saudi.</p>
-<p>Timnas Indonesia telah memastikan diri lolos ke putaran final sejak putaran kedua kualifikasi, dan berdasarkan peringkat FIFA terkini, Indonesia ditempatkan di Pot 4 bersama Kuwait dan Singapura.</p>
-<p>Piala Asia 2027 sendiri akan berlangsung pada 7 Januari hingga 5 Februari 2027 dan diikuti oleh 24 negara dari seluruh benua Asia.</p>
-<p>Indonesia berpotensi satu grup dengan tim-tim kuat dari Asia Timur atau Asia Barat tergantung hasil undian, yang tentu akan sangat menentukan strategi persiapan John Herdman ke depan.</p>`,
-    sources: [
-      { name: "Bola.com — AFC Gelar Drawing Piala Asia 2027 pada 11 April di Arab Saudi", url: "https://www.bola.com/indonesia/read/6289667/afc-gelar-drawing-piala-asia-2027-pada-11-april-di-arab-saudi-timnas-indonesia-berpeluang-satu-grup-dengan-siapa" },
-      { name: "Tirto.id — Kapan Jadwal Drawing Grup Piala Asia 2027, Indonesia Pot Berapa?", url: "https://tirto.id/kapan-jadwal-drawing-grup-piala-asia-2027-pot-timnas-indonesia-htwh" }
-    ]
-  },
-  {
-    badge: "Liga 1", badgeClass: "badge-green",
-    date: "1–3 April 2026", author: "GarudaFC · Liputan6 · Bola.net",
-    title: "Persib Bandung Kokoh di Puncak dengan 58 Poin, Unggul 4 Angka dari Borneo FC",
-    body: `<p>Persib Bandung semakin kokoh memimpin klasemen BRI Super League 2025/2026 dengan mengoleksi 58 poin dari 25 pertandingan, unggul 4 angka dari Borneo FC Samarinda di peringkat dua (54 poin).</p>
-<p>Maung Bandung mencatatkan statistik impresif dengan 18 kemenangan, 4 seri, dan hanya 3 kekalahan, disertai produktivitas gol luar biasa — 43 gol tercipta dan hanya 14 gol kemasukan sepanjang 25 pekan pertama kompetisi.</p>
-<p>Persib juga mencatat rekor tak terkalahkan di kandang sendiri (Stadion GBLA, Bandung) sepanjang musim ini, menjadi benteng kokoh yang sulit ditembus tamu.</p>
-<p>Bulan April ini, tim asuhan Bojan Hodak akan menghadapi lima laga berat melawan Semen Padang, Bali United, Dewa United, Arema FC, dan Bhayangkara FC.</p>
-<p>Dengan tersisa 9 pekan kompetisi, Persib berada dalam posisi sangat menguntungkan untuk merengkuh gelar juara Liga 1 musim 2025/2026.</p>`,
-    sources: [
-      { name: "Liputan6.com — Klasemen BRI Super League: Persib Mantap di Puncak", url: "https://www.liputan6.com/bola/read/6308371/klasemen-bri-super-league-20252026-persib-mantap-di-puncak-borneo-dan-persija-mengintai" },
-      { name: "Bola.net — Klasemen BRI Super League 2025/2026 Update Terbaru", url: "https://www.bola.net/klasemen/indonesia.html" }
-    ]
-  },
-  {
-    badge: "Liga 1", badgeClass: "badge-green",
-    date: "3 April 2026", author: "GarudaFC · Bola.net · Metro TV",
-    title: "BRI Super League Pekan 26 Kembali Bergulir, Arema vs Malut United Buka Kompetisi Pasca Lebaran",
-    body: `<p>Kompetisi BRI Super League 2025/2026 resmi kembali bergulir pada Jumat 3 April 2026 setelah jeda libur Lebaran Idulfitri, dengan laga pembuka pekan ke-26 mempertemukan Arema FC melawan Malut United FC di Stadion Kanjuruhan, Malang.</p>
-<p>Laga tersebut berakhir imbang 1-1, di mana Hansamu Yama mencetak gol pembuka di menit ke-26 melalui umpan sepak pojok Gustavo Franca, sebelum Malut United menyamakan kedudukan via penalti David da Silva di menit ke-42.</p>
-<p>Laga lain pada hari yang sama adalah Dewa United menghadapi PSIM Yogyakarta di Stadion Internasional Banten, Serang, pukul 19.00 WIB.</p>
-<p>Pekan ke-26 dijadwalkan berlangsung hingga Senin 6 April 2026 dengan total 9 laga melibatkan seluruh tim BRI Super League. Seluruh pertandingan dapat disaksikan live di Indosiar dan Vidio.</p>`,
-    sources: [
-      { name: "Bola.net — Jadwal BRI Super League Pekan Ini Live di Indosiar dan Vidio", url: "https://www.bola.net/amp/indonesia/jadwal-bri-super-league-pekan-ini-live-di-indosiar-dan-vidio-3-6-april-2026-5bc2d1.html" },
-      { name: "Metro TV News — Jadwal BRI Super League Pekan ke-26", url: "https://www.metrotvnews.com/read/kpLCQl41-jadwal-bri-super-league-pekan-ke-26-hari-ini-arema-fc-vs-malut-united-jadi-pembuka" }
-    ]
-  },
-  {
-    badge: "Liga 1", badgeClass: "badge-green",
-    date: "2–3 April 2026", author: "GarudaFC · SportCorner · iNews",
-    title: "Borneo FC Bantai Persebaya 5-1, Pesut Etam Siap Kejar Persib di Puncak Klasemen",
-    body: `<p>Borneo FC Samarinda memperlihatkan ketajaman yang mematikan dengan menghajar Persebaya Surabaya 5-1 pada laga terakhir sebelum jeda Lebaran, sebuah hasil yang semakin memperkokoh posisi mereka di peringkat dua klasemen.</p>
-<p>Kemenangan besar itu membuat Borneo FC mengoleksi 54 poin dari 25 laga, dengan catatan 17 kemenangan, 3 seri, dan 5 kekalahan, serta selisih gol mencapai angka +23.</p>
-<p>Pelatih Borneo FC menegaskan tim tidak boleh terpeleset di laga berikutnya menghadapi Madura United pada 5 April 2026, karena selisih 4 poin dari Persib masih sangat mungkin dipangkas.</p>
-<p>Di sisi lain, kekalahan telak tersebut menjadi pukulan berat bagi Persebaya, yang kini terancam semakin jauh dari zona empat besar. Pelatih Persebaya Bernardo Tavares langsung menyatakan tekad tim untuk bangkit saat menjamu Persita Tangerang pada 4 April 2026.</p>`,
-    sources: [
-      { name: "SportCorner.id — Kejar Persib, Borneo FC Tak Mau Terpeleset di Madura", url: "https://www.sportcorner.id/read/41716/kejar-persib-borneo-fc-tak-mau-terpeleset-di-madura" },
-      { name: "iNews.id — Usai Dibantai Borneo FC, Persebaya Usung Kebangkitan Kontra Persita", url: "https://www.inews.id/sport/soccer/usai-dibantai-borneo-fc-persebaya-usung-kebangkitan-kontra-persita" }
-    ]
-  },
-  {
-    badge: "Transfer", badgeClass: "badge-purple",
-    date: "25 Januari 2026", author: "GarudaFC · Detik Sport · Kompas Bola",
-    title: "Layvin Kurzawa Resmi Berseragam Persib Bandung, Mantan Bintang PSG Pilih Liga Indonesia",
-    body: `<p>Persib Bandung resmi memperkenalkan Layvin Kurzawa, mantan bek kiri Paris Saint-Germain (PSG) dan Timnas Prancis, sebagai rekrutan baru di putaran kedua BRI Super League 2025/2026.</p>
-<p>Kurzawa diperkenalkan kepada publik dan ribuan Bobotoh pada Minggu (25/1/2026) di Stadion Gelora Bandung Lautan Api (GBLA) usai laga melawan PSBS Biak, disambut dengan antusias luar biasa oleh suporter setia Persib.</p>
-<p>Bek berusia 32 tahun itu menerima gaji sebesar 50.000 Euro per bulan (sekitar Rp 980 juta–Rp 1 miliar), menjadikannya salah satu pemain dengan bayaran tertinggi di Liga Indonesia saat ini.</p>
-<p>Kurzawa mengungkapkan bahwa antusiasme luar biasa para Bobotoh dan suasana Kota Bandung menjadi faktor utama yang meyakinkannya bergabung, di samping tawaran finansial yang menarik.</p>
-<p>Pasca bergabung, Kurzawa memberikan dampak positif di ruang ganti dan perlahan mulai diturunkan, meski sempat mengalami sedikit masalah kebugaran di beberapa laga awal Maret 2026.</p>`,
-    sources: [
-      { name: "Detik Sport — Persib Resmi Rekrut Mantan Bek PSG Layvin Kurzawa", url: "https://sport.detik.com/sepakbola/liga-indonesia/d-8324969/persib-resmi-rekrut-mantan-bek-psg-layvin-kurzawa" },
-      { name: "Kompas Bola — Alasan Layvin Kurzawa Gabung ke Persib Bandung", url: "https://bola.kompas.com/read/2026/01/26/21480338/terungkap-alasan-layvin-kurzawa-gabung-ke-persib-bandung" }
-    ]
-  },
-  {
-    badge: "Pemain Abroad", badgeClass: "badge-purple",
-    date: "Maret 2026", author: "GarudaFC · Jawa Pos · CNN Indonesia",
-    title: "Sejarah Baru: 14 Pemain Abroad di Skuad Timnas Indonesia, 4 dari Lima Liga Top Eropa",
-    body: `<p>Timnas Indonesia mencatat tonggak bersejarah ketika John Herdman memanggil 14 pemain abroad (berkarier di luar negeri) untuk masuk skuad FIFA Series 2026, dengan empat di antaranya berasal dari lima liga top Eropa — jumlah terbanyak dalam sejarah sepak bola Indonesia.</p>
-<p>Keempat pemain dari liga elite Eropa itu adalah Jay Idzes dan Emil Audero (Serie A Italia), Calvin Verdonk (Ligue 1 Prancis), serta Kevin Diks yang membela klub di Bundesliga Jerman.</p>
-<p>Selain empat pemain Eropa tersebut, sejumlah pemain Indonesia juga berkarier di Asia Tenggara, seperti Asnawi Mangkualam (Port FC, Thailand), Pratama Arhan (Bangkok United), dan Sandy Walsh (Buriram United).</p>
-<p>Fenomena meningkatnya jumlah pemain Indonesia berkarier di luar negeri dianggap sebagai bukti nyata meningkatnya kualitas dan daya saing pemain Indonesia di pentas internasional.</p>`,
-    sources: [
-      { name: "Jawa Pos — Sejarah Baru! 14 Pemain Abroad Masuk Skuad Timnas Indonesia", url: "https://jawapos.com/sepak-bola-indonesia/2603260258/sejarah-baru-14-pemain-abroad-masuk-skuad-timnas-indonesia-hadapi-fifa-series-2026-4-dari-eropa" },
-      { name: "CNN Indonesia — Timnas Indonesia Diperkuat Pemain Abroad", url: "https://www.cnnindonesia.com/olahraga/20250518125345-142-1230439/timnas-indonesia-diperkuat-21-pemain-abroad-lawan-china-dan-jepang" }
-    ]
-  },
-  {
-    badge: "Pemain Abroad", badgeClass: "badge-purple",
-    date: "Sep 2025 – Apr 2026", author: "GarudaFC · Kompas Bola · Transfermarkt",
-    title: "Marselino Ferdinan Jalani Petualangan di Slovak Liga bersama AS Trencin, On Loan dari Oxford United",
-    body: `<p>Gelandang serang berbakat Timnas Indonesia Marselino Ferdinan menjalani musim 2025/2026 bersama AS Trencin di Slovak First Football League, setelah resmi dipinjamkan oleh klub pemiliknya Oxford United (EFL Championship, Inggris) pada 6 September 2025.</p>
-<p>Marselino membuat debut liganya bersama Trencin pada 18 Oktober 2025, masuk sebagai pemain pengganti di babak kedua, dan perlahan mulai mendapat kepercayaan pelatih untuk tampil lebih banyak.</p>
-<p>Perjalanan karier gelandang ini terbilang menakjubkan: bergabung dengan klub Belgia Deinze pada Februari 2023, lalu pindah ke Oxford United pada 2024, dan kini memperkuat Trencin di Slovakia.</p>
-<p>John Herdman memberi sinyal akan mempertimbangkan Marselino kembali untuk jendela FIFA berikutnya, seiring pemain ini mulai menemukan ritme terbaiknya di kompetisi Eropa.</p>`,
-    sources: [
-      { name: "Kompas Bola — Marselino Ferdinan Potensi Comeback di FIFA Series 2026", url: "https://bola.kompas.com/read/2026/03/08/14455418/dulu-ditepikan-kluivert-marselino-ferdinan-potensi-comeback-di-fifa-series-2026" },
-      { name: "Transfermarkt — Marselino Ferdinan Player Profile", url: "https://www.transfermarkt.us/marselino-ferdinan/profil/spieler/875219" }
-    ]
-  },
-  {
-    badge: "Timnas U-17", badgeClass: "badge-red",
-    date: "3 April 2026", author: "GarudaFC · ANTARA News · Okezone Bola",
-    title: "Timnas U-17 di Grup A Piala AFF U-17 2026 Bersama Vietnam & Malaysia, Tuan Rumah Sidoarjo",
-    body: `<p>Timnas Indonesia U-17 resmi ditempatkan di Grup A Piala AFF U-17 2026 bersama Vietnam, Malaysia, dan Timor Leste — sebuah grup yang dipastikan berjalan sangat ketat mengingat Vietnam dan Malaysia adalah kekuatan besar sepak bola junior Asia Tenggara.</p>
-<p>Turnamen yang menjadikan Indonesia sebagai tuan rumah ini akan berlangsung di Stadion Gelora Delta Sidoarjo dan Stadion Gelora Joko Samudro, Gresik, pada 13–24 April 2026.</p>
-<p>Laga pertama yang sangat ditunggu adalah Indonesia U-17 vs Malaysia U-17 yang dijadwalkan pada Kamis, 16 April 2026, pukul 19.30 WIB di Gelora Joko Samudro, Gresik, dan diperkirakan disiarkan di iNews TV dan RCTI+.</p>
-<p>Piala AFF U-17 2026 menjadi ajang krusial bagi Indonesia untuk mengukur kekuatan generasi muda Garuda dan mempersiapkan mereka menuju Piala Asia U-17 yang dijadwalkan Mei 2026.</p>`,
-    sources: [
-      { name: "ANTARA News — Indonesia menghuni Grup A di Piala AFF U17 2026 bersama Vietnam", url: "https://www.antaranews.com/berita/5457383/indonesia-menghuni-grup-a-di-piala-aff-u17-2026-bersama-vietnam" },
-      { name: "Okezone Bola — Jadwal Siaran Langsung Timnas Indonesia U-17 di Piala AFF U-17 2026", url: "https://bola.okezone.com/read/2026/04/03/51/3210354/jadwal-siaran-langsung-timnas-indonesia-u-17-di-piala-aff-u-17-2026-vietnam-dan-malaysia-menanti" }
-    ]
-  }
-];
-
-function openModal(i) {
-  const a = articles[i];
-  const sourcesHtml = a.sources.map(s =>
-    `<a class="source-link" href="${s.url}" target="_blank" rel="noopener">🔗 ${s.name}</a>`
-  ).join('');
-
-  document.getElementById('modalContent').innerHTML = `
-    <div class="modal-badge"><span class="badge ${a.badgeClass}">${a.badge}</span></div>
-    <div class="modal-title">${a.title}</div>
-    <div class="modal-meta">
-      <span>📅 ${a.date}</span>
-      <span>✍️ ${a.author}</span>
-    </div>
-    <div class="modal-body">${a.body}</div>
-    <div class="modal-sources">
-      <h5>📰 Sumber Berita</h5>
-      ${sourcesHtml}
-    </div>
-  `;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function closeOnOverlay(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// Countdown
-let secs = 1800;
-const el = document.getElementById('countdown');
-setInterval(() => {
-  secs--;
-  if (secs <= 0) { location.reload(); return; }
-  const m = String(Math.floor(secs/60)).padStart(2,'0');
-  const s = String(secs%60).padStart(2,'0');
-  if(el) el.textContent = m+':'+s;
-}, 1000);
+  // Countdown timer ke refresh berikutnya
+  let seconds = 1800;
+  const el = document.getElementById('countdown');
+  setInterval(() => {
+    seconds--;
+    if (seconds <= 0) { location.reload(); return; }
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+    if (el) el.textContent = m + ':' + s;
+  }, 1000);
 </script>
+
 </body>
 </html>
